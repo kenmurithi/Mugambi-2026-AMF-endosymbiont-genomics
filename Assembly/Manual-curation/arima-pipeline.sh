@@ -3,12 +3,6 @@
 ##############################################
 # ARIMA GENOMICS MAPPING PIPELINE 07/26/2025 #
 ##############################################
-
-
-##########################################
-# Commands #
-##########################################
-
 SRA='gmarg-1274593-1274591-1532815_1530194'
 LABEL='gmarg-1274593-1274591-1532815_1530194'
 BWA='/home/eniac/miniconda3/bin/bwa'
@@ -59,19 +53,6 @@ perl $COMBINER $FILT_DIR/${SRA}_1.bam $FILT_DIR/${SRA}_2.bam $SAMTOOLS $MAPQ_FIL
 
 echo "### Step 3.B: Add read group"
 java -Xmx4G -Djava.io.tmpdir=temp/ -jar $PICARD AddOrReplaceReadGroups INPUT=$TMP_DIR/$SRA.bam OUTPUT=$PAIR_DIR/$SRA.bam ID=$SRA LB=$SRA SM=$LABEL PL=ILLUMINA PU=none
-
-###############################################################################################################################################################
-###                                           How to Accommodate Technical Replicates                                                                       ###
-### This pipeline is currently built for processing a single sample with one read1 and read2 FASTQ file.                                                    ###
-### Technical replicates (eg. one library split across multiple lanes) should be merged before running the MarkDuplicates command.                          ###
-### If this step is run, the names and locations of input files to subsequent steps will need to be modified in order for subsequent steps to run correctly.###
-### The code below is an example of how to merge technical replicates.                                                                                      ###
-###############################################################################################################################################################
-#       REP_NUM=X # number of the technical replicate set e.g. 1
-#       REP_LABEL=${LABEL}_rep$REP_NUM
-#       INPUTS_TECH_REPS=('bash' 'array' 'of' 'bams' 'from' 'replicates') # BAM files you want combined as technical replicates
-#   example bash array - INPUTS_TECH_REPS=('INPUT=A.L1.bam' 'INPUT=A.L2.bam' 'INPUT=A.L3.bam')
-#       java -Xmx8G -Djava.io.tmpdir=temp/ -jar $PICARD MergeSamFiles $INPUTS_TECH_REPS OUTPUT=$TMP_DIR/$REP_LABEL.bam USE_THREADING=TRUE ASSUME_SORTED=TRUE VALIDATION_STRINGENCY=LENIENT
 
 echo "### Step 4: Mark duplicates"
 java -Xmx30G -XX:-UseGCOverheadLimit -Djava.io.tmpdir=temp/ -jar $PICARD MarkDuplicates INPUT=$PAIR_DIR/$SRA.bam OUTPUT=$REP_DIR/$REP_LABEL.bam METRICS_FILE=$REP_DIR/metrics.$REP_LABEL.txt TMP_DIR=$TMP_DIR ASSUME_SORTED=TRUE VALIDATION_STRINGENCY=LENIENT REMOVE_DUPLICATES=TRUE
