@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-# Run hifiasm with Hi-C and HiFi reads
+#Run hifiasm with Hi-C and HiFi reads
 hifiasm \
   -o gigaspora_hifiasm.asm \
   -t 25 \
