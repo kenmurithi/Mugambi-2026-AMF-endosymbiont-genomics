@@ -2,7 +2,7 @@
 #1. Convert fasta to tpf
 perl ./pretext/rapid-curation/rapid_split.pl -fa scaffolds_FINAL.fasta
 
-#2. Convert the Hi-C reads to pretext 
+#2. Convert the Hi-C reads to ".pretext" 
 taskset -c 0-30 samtools view -@ 30 -h gmarg-1274593-1274591-1532815_1530194_rep1.bam \
 taskset -c 0-30 PretextMap -o ggmarg-1274593-1274591-1532815_1530194_yahs-first.pretext --sortby name --sortorder ascend --mapq 10
 
@@ -25,7 +25,7 @@ cat yahs_coverage.bedgraph | PretextGraph -i /media/eniac/WD2/gigaspora_hifiasm/
 #4 Gaps
 cat /media/eniac/WD2/gigaspora_hifiasm/SALSA_scaffolding/YAhs/hifiasm_yahs_gaps.bedgraph | PretextGraph -i /media/eniac/WD2/gigaspora_hifiasm/SALSA_scaffolding/YAhs/deduplicated/files/hifiasm_yahs_bmin_HiC_rep1.bam.pretext -n "Yahs gaps"
 
-#5. Agp to tpf
+#5. Convert the Agp file to an updated tpf
 python3 ./agp-tpf-utils/src/tola/assembly/scripts/pretext_to_tpf.py -a scaffolds_final_yahs.fa.tpf -p gigaspora_hifiasm_bmin_HiC_rep1.bam_sortbyNameFINAL.pretext.agp -o Hic-bmin-FINL-pretext.tpf
 
 #6. Generating the final scaffolds/chromosomes
