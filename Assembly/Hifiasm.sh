@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#Run hifiasm with Hi-C and HiFi reads
+# Run hifiasm with Hi-C and HiFi reads
 hifiasm \
   -o gigaspora_hifiasm.asm \
   -t 25 \
