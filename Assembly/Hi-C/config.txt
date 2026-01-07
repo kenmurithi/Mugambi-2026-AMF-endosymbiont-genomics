@@ -1,1 +1,54 @@
+################################
+# Please change the variable settings below if necessary
+#########################################################################
+## Paths and Settings  - Do not edit!
+#########################################################################
+
+TMP_DIR =  tmp
+LOGS_DIR =  logs
+BOWTIE2_OUTPUT_DIR =  bowtie_results
+MAPC_OUTPUT = hic_results
+RAW_DIR =  rawdata
+#########################################################################
+## SYSTEM - PBS - Start Editing Here!!
+#########################################################################
+
+N_CPU = 15
+LOGFILE = hicpro.log
+
+#########################################################################
+## Data
+#########################################################################
+
+PAIR1_EXT = _R1
+PAIR2_EXT = _R2
+
+#########################################################################
+## Alignment options
+#########################################################################
+
+FORMAT = phred33
+MIN_MAPQ = 10
+
+BOWTIE2_IDX_PATH = /media/eniac/WD1/ken/gigaspora/pasa/Gi-marg-index  # Path to your Bowtie2 indexes
+BOWTIE2_GLOBAL_OPTIONS = --very-sensitive -L 30 --score-min L,-0.6,-0.2 --end-to-end --reorder
+BOWTIE2_LOCAL_OPTIONS = --very-sensitive -L 20 --score-min L,-0.6,-0.2 --end-to-end --reorder
+
+#########################################################################
+## Annotation files
+#########################################################################
+
+REFERENCE_GENOME = Gi-margarita-unmasked-FINAL-scaffolds.fasta
+GENOME_SIZE = /media/eniac/WD1/ken/gigaspora/pasa/Gi-margarita-unmasked-FINAL-scaffolds.sizes
+
+#########################################################################
+## Digestion Hi-C
+#########################################################################
+
+GENOME_FRAGMENT = /media/eniac/WD1/ken/gigaspora/pasa/Gi-margarita-unmasked-FINAL-fragments.bed
+LIGATION_SITE = ANTCGANT,ANTCGATC,ANTCCTNA,ANTCTTA,GATCGANT,GATCGATC,GATCCTNA,GATCTTA,TNAGGANT,TNAGGATC,TNAGCTNA,TNAGTTA,TAAGANT,TAAGATC,TAACTNA,TAATTA
+MIN_FRAG_SIZE = 100
+MAX_FRAG_SIZE = 100000
+MIN_INSERT_SIZE = 100
+MAX_INSERT_SIZE = 600
 
