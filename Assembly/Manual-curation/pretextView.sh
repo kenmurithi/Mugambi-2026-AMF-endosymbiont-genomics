@@ -1,1 +1,37 @@
 
+#1. Convert fasta to tpf
+perl ./pretext/rapid-curation/rapid_split.pl -fa scaffolds_FINAL.fasta
+
+#2. Convert the Hi-C reads to pretext 
+taskset -c 0-30 samtools view -@ 30 -h gmarg-1274593-1274591-1532815_1530194_rep1.bam \
+taskset -c 0-30 PretextMap -o ggmarg-1274593-1274591-1532815_1530194_yahs-first.pretext --sortby name --sortorder ascend --mapq 10
+
+#3. Pretext coverage track
+##3.1 Align HiFi reads to the assembly using minimap2
+minimap2 -t 35 -ax map-hifi scaffolds_final_yahs.fa ../../../gigaspora_reads/gigaspora_hifi.fastq.gz -o aligned_reads.sam
+
+##3.2 Convert SAM to BAM using samtools
+samtools view -bS aligned_reads.sam > aligned_reads.bam
+
+##3.3. Sort the BAM file
+samtools sort -@ 35 -o aligned_reads_sorted.bam aligned_reads.bam
+
+##3.4 Generate a bedgraph using bedtools genomecov with the -bga option
+bedtools genomecov -ibam aligned_reads_sorted.bam -bga > coverage.bedgraph
+
+##3.5 Inject tracks into Pretext Map 
+cat yahs_coverage.bedgraph | PretextGraph -i /media/eniac/WD2/gigaspora_hifiasm/SALSA_scaffolding/YAhs/deduplicated/files/hifiasm_yahs_bmin_HiC_rep1.bam.pretext\ -n "Yahs Coverage"
+
+#4 Gaps
+cat /media/eniac/WD2/gigaspora_hifiasm/SALSA_scaffolding/YAhs/hifiasm_yahs_gaps.bedgraph | PretextGraph -i /media/eniac/WD2/gigaspora_hifiasm/SALSA_scaffolding/YAhs/deduplicated/files/hifiasm_yahs_bmin_HiC_rep1.bam.pretext -n "Yahs gaps"
+
+#5. Agp to tpf
+python3 ./agp-tpf-utils/src/tola/assembly/scripts/pretext_to_tpf.py -a scaffolds_final_yahs.fa.tpf -p gigaspora_hifiasm_bmin_HiC_rep1.bam_sortbyNameFINAL.pretext.agp -o Hic-bmin-FINL-pretext.tpf
+
+#6. Generating the final scaffolds/chromosomes
+  perl /media/eniac/WD2/gigaspora_hifiasm/SALSA_scaffolding/pretext/rapid-curation/rapid_join.pl \
+  -fa Gi_marg-yahs-first_scaffolds_final.fa \
+  -tpf Gi_marg-yahs-first_scaffolds_pretext-curated.1.primary.curated.tpf \
+  -csv curated_superscaffolds.csv \
+  -out Gi_marg-yahs-first_scaffolds_pretext-curated-FINAL.fa
+
