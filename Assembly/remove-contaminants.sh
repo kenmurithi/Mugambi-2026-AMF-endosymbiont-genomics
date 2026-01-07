@@ -1,5 +1,5 @@
 
-# Step 1: Manually inspect BLAST hits (from )
+# Step 1: Manually inspect BLAST hits (from diamond-blast.sh)
 grep -A 5 "Query=" gigaspora_canu_blastx.out | head
 
 # Step 2: Remove contaminant contigs
