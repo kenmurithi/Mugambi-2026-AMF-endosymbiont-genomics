@@ -1,3 +1,5 @@
+## The steps below generate a ".hic" file used to produce a genome-wide contact map.
+
 # Step 1: Build Bowtie2 index
 bowtie2-build Gi-margarita-scaffolds.fasta  Gi-margarita --threads 15
 
