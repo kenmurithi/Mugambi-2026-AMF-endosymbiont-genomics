@@ -1,4 +1,4 @@
-## Step 1: Hi-C read alignment
+## Hi-C read alignment
 
 #The *G. margarita* scaffolds were indexed using Bowtie2, and Hi-C reads were aligned independently for read 1 and read 2 using local alignment.
 
