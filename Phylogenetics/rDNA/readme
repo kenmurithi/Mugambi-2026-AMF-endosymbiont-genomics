@@ -1,1 +1,8 @@
 
+### For Iq3: 
+iqtree -s giga.fasta -m GTR+I+G -sp gigaspora.partition -bb 1000 -alrt 1000 -nt AUTO
+
+### For Raxml performed on Cipres Gateway:
+axml-ng --threads 80 --force perf_threads -msa infile.txt --workers 20 --bs-trees autoMRE{1000} --all --model part.txt --prefix GIGAkrugclic
+--outgroup Dentiscutata_savannicola_HE962433,Dentiscutata_savannicola_HE962446,Dentiscutata_savannicola_HE962435,Dentiscutata_savannicola_HE962461,Dentiscutata_savannicola_HE962463,
+Fuscutata_heterogama_FR750014,Fuscutata_heterogama_FR750163,Fuscutata_heterogama_OM201731,Fuscutata_heterogama_FR750016,Fuscutata_heterogama_FR750167
