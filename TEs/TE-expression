@@ -1,0 +1,97 @@
+##### TE expression with TEtranscripts
+#### RNAseq alignments
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-BUOAC_R1.fastq -2 ../Stefano/Bpos-BUOAC_R2.fastq -S
+01-ERM1.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-ERM1.sam > 01-ERM1.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-BUOAG_R1.fastq -2 ../Stefano/Bpos-BUOAG_R2.fastq -S
+01-ERM2.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-ERM2.sam > 01-ERM2.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-BUOAH_R1.fastq -2 ../Stefano/Bpos-BUOAH_R2.fastq -S
+01-ERM3.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-ERM3.sam > 01-ERM3.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-MYC1_P_R1.fastq -2 ../Stefano/Bpos-MYC1_P_R2.fastq -S
+01-lotus-B1.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-lotus-B1.sam > 01-lotus-B1.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-MYC5_P_R1.fastq -2 ../Stefano/Bpos-MYC5_P_R2.fastq -S
+01-lotus-B2.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-lotus-B2.sam > 01-lotus-B2.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-MYC7_P_R1.fastq -2 ../Stefano/Bpos-MYC7_P_R2.fastq -S
+01-lotus-B3.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-lotus-B3.sam > 01-lotus-B3.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bmin-MYC4_N_R1.fastq -2 ../Stefano/Bmin-MYC4_N_R2.fastq -S
+01-lotus1.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-lotus1.sam > 01-lotus1.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bmin-MYC5_N_R1.fastq -2 ../Stefano/Bmin-MYC5_N_R2.fastq -S
+01-lotus2.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-lotus2.sam > 01-lotus2.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bmin-MYC7_N_R1.fastq -2 ../Stefano/Bmin-MYC7_N_R2.fastq -S
+01-lotus3.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-lotus3.sam > 01-lotus3.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-BUNYW_R1.fastq -2 ../Stefano/Bpos-BUNYW_R2.fastq -S
+01-Spores1.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-Spores1.sam > 01-Spores1.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-BUNYX_R1.fastq -2 ../Stefano/Bpos-BUNYX_R2.fastq -S 01-
+Spores2.sam -p 15 --no-mixed --no-discordant -k 100
+
+samtools view -bS 01-Spores2.sam > 01-Spores2.bam
+rm *sam
+hisat2 -x 00-Giga-index-hisat -1 ../Stefano/Bpos-BUNYY_R1.fastq -2 ../Stefano/Bpos-BUNYY_R2.fastq -S 01-
+Spores3.sam -p 15 --no-mixed --no-discordant -k 100
+samtools view -bS 01-Spores3.sam > 01-Spores3.bam
+######## PREPARING TE and GENES ANNOTATION FOR TETRANSCRIPTS
+cp ../17-giga-RMask/Gi-margarita-unmasked-FINAL-scaffolds.fasta.out 17-gimar-RM-known-cur.out
+cp ../18-giga-RMask-unknown/Gi-margarita-unmasked-FINAL-scaffolds.fasta.out 18-gimar-RM-known-unk.out
+awk '{OFS="\t"}{print $5, $6, $7, $10";"$11, $1, $9}' 18-gimar-RM-known-unk.out | grep 'scaffold' | sed
+'s/LTR\/Unknown/LTR/' | sed 's/LTR\/Ngaro/DIRS/' | sed 's/LTR\/DIRS/DIRS/' | sed 's/hAT/DNA\/hAT/' | sed
+'s/Ginger-1/DNA\/Ginger-1/' | sed 's/DNA\/DNA/DNA/' | sed 's/CMC-Plavaka/DNA\/CMC-Plavaka/' | sed
+'s/DNA\/Crypton-A/Crypton/' | sed 's/DNA\/Maverick/Maverick/' | sed 's/RC\///' | sed 's/Zator/DNA\/Zator/' | sed
+
+'s/DNA\/DNA/DNA/' | awk -F'\t' '{OFS="\t"}{$6 = gensub(/C/, "-", "g", $6); print $0;}' > 19-gimar-RM-
+unknown.bed
+
+awk '{OFS="\t"}{print $5, $6, $7, $10";"$11, $1, $9}' 17-gimar-RM-known-cur.out | grep 'scaffold' | sed
+'s/LTR\/Unknown/LTR/' | sed 's/LTR\/Ngaro/DIRS/' | sed 's/LTR\/DIRS/DIRS/' | sed 's/hAT/DNA\/hAT/' | sed
+'s/Ginger-1/DNA\/Ginger-1/' | sed 's/DNA\/DNA/DNA/' | sed 's/CMC-Plavaka/DNA\/CMC-Plavaka/' | sed 's/DN
+A\/Crypton-A/Crypton/' | sed 's/DNA\/Maverick/Maverick/' | sed 's/RC\///' | sed 's/Zator/DNA\/Zator/' | sed
+'s/DNA\/DNA/DNA/' | awk -F'\t' '{OFS="\t"}{$6 = gensub(/C/, "-", "g", $6); print $0;}' > 19-gimar-RM-known.bed
+
+bedtools intersect -v -s -a 19-gimar-RM-unknown.bed -b 19-gimar-RM-known.bed > 20-gimar-unk-
+nooverlap.bed
+
+cat 19-gimar-RM-known.bed 20-gimar-unk-nooverlap.bed | sed 's/;/\t/g' | awk '{OFS="\t"}{print $1, $2, $3, $7,
+$4, $5, $6}' | awk -F " " '{OFS="\t"}{if($6~"/"){gsub("/","/");print $1,$2,$3, $4, $5, $6, $7} else {print $1,$2,$3,
+$4, $5, $6"/"$6, $7}}' | sed 's/\//\t/' > 21-gimar-final-annotation.out
+cat 19-gimar-RM-known.bed 20-gimar-unk-nooverlap.bed > 24-gimar-final-annotation.bed
+perl /media/eniac/WD3/jordana/01-TE-Rhiir/09-expression-test/makeTEgtf.pl -c 1 -s 2 -e 3 -o 4 -t 5 -f 7 -C 6 -S
+8 -1 21-gimar-final-annotation.out > 22-gimar-final-annotation.gtf
+cat
+/media/eniac/WD1/ken/gigaspora/RNASeq/Stefano/funannotate/predict_results/Gigaspora_margarita_BEG.gff3
+| sed 's/ID=/gene_id /' |sed 's/Parent=/ transcript_id /' | sed 's/;/\t/g' | awk '{OFS="\t"}{print $1, $2, $3, $4, $5,
+$6, $7, $8, $9" \""$10"\"; "$11" \""$12"\"; "}' | grep 'mRNA' > 23-gimar-gene-ann.gtf
+####### TEtranscripts
+# lotus B vs no B
+/home/eniac/jordana/TEtranscripts/bin/TEtranscripts -c
+/media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-lotus1.bam
+/home/eniac/jordana/TEtranscripts/bin/TEtranscripts -c
+/media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-
+lotushome/eniac/jordana/TEtranscripts/bin/TEtranscripts -c
+/media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-lotus3.bam -t
+/media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-lotus-B* --GTF 23-gimar-gene-ann.gtf --TE
+22-gimar-final-annotation.gtf --format BAM --project 31-lotusBVSlotus --outdir ./ --mode multi
+# lotus vs ERM
+/home/eniac/jordana/TEtranscripts/bin/TEtranscripts -c
+/media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-ERM* -t
+/media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-lotus1.bam
+/media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-lotus2.bam
+media/eniac/WD1/ken/gigaspora/RNASeq/Alignments-multi/01-lotus3.bam --GTF 23-gimar-gene-ann.gtf --TE
+22-gimar-final-annotation.gtf --format BAM --project 30-lotusVSerm --outdir ./ --mode multi
