@@ -1,0 +1,57 @@
+########### TE annotation on G. margarita genome
+
+##### Repeat libraries with RepeatModeler
+perl BuildDatabase -name giga ../genome/Gi-margarita-unmasked-FINAL-scaffolds.fasta
+perl RepeatModeler -database giga -pa 15 -LTRStruct
+
+##### TE curation with TEtrimmer and manual curation
+TEtrimmer -i giga-families.fa -g ../genome/Gi-margarita-unmasked-FINAL-scaffolds.fasta -o 01-TEtrim -t 10 --
+classify_all
+
+##### manual curation from the remained uknown
+getorf -sequence 01-TEtrim/TEtrimmer_consensus_merged.fasta -outseq 02-TEtrimmer-merged-ORFs.aa -
+minsize 100
+hmmscan --domtblout 03-TEtrimm-ORFs-hmmer.tblout --cpu 3 /media/eniac/WD3/jordana/02-TE-all-AMF/05-
+curation2.0/10-curated-domains.hmm 02-TEtrimmer-merged-ORFs.aa
+
+# selecting the new curated sequences
+grep 'Unknown' 03-TEtrimm-ORFs-hmmer.tblout | sed 's/LTR_Unknown/LTR\/Unknown'/ | sed 's/#/\t/' | awk
+'!x[$4]++' | awk '{print $5, $1, $4}' | sed 's/_/\t/' | awk '{OFS="\t"}{print $4"#"$1, $4, $3}' | sed
+'s/LTR\/Unknown/LTR_Unknown/' | awk 'BEGIN {
+map["DIRS-"] = "DIRS";
+map["LTR-"] = "LTR/Gypsy";
+map["Maverick-"] = "Maverick";
+map["hAT-"] = "DNA/hAT";
+map["LINE-"] = "LINE";
+map["PLE-"] = "PLE";
+# add more if needed
+}
+{
+for (prefix in map) {
+if ($3 ~ "^" prefix) $3 = map[prefix];
+}
+print
+}' | awk '{OFS="\t"}{print $1, $2"#"$3}' > 04-Unknown-curated-rename.table
+
+awk 'FNR==NR{a[$0];next} /^>/{val=$0;sub(/^>/,"",val);flag=val in a?1:0} flag' 07-unknown-seq.txt 06-
+TEtrimm-unk-man-curated-renamed-lib.fasta > 08-remained-unknown.fa
+getorf -sequence 08-remained-unknown.fa -outseq 09-remained-unk.aa
+hmmscan --domtblout 10-expanded-genes-hmmr.txt --cpu 3 12-rep-prot.hmm 09-remained-unk.aa
+grep 'Unknown' 10-expanded-genes-hmmer.tblout | sed 's/Unknown_/Unknown\t/' | awk '{print $4}' | sort | uniq
+> 11-unknown-expanded.txt
+grep '>' 06-TEtrimm-unk-man-curated-renamed-lib.fasta | sed 's/>//' > 12-all-seq.txt
+grep -vwFf 11-unknown-expanded.txt 12-all-seq.txt | grep -v '#Unknown' > 15-TEtrimm-man-lib-no-unk.txt
+awk 'FNR==NR{a[$0];next} /^>/{val=$0;sub(/^>/,"",val);flag=val in a?1:0} flag' 15-TEtrimm-man-lib-no-unk.txt
+06-TEtrimm-unk-man-curated-renamed-lib.fasta > 16-giga-final-TElib.fa
+
+##### Annotating the final library using RepeatMasker
+RepeatMasker ../genome/Gi-margarita-unmasked-FINAL-scaffolds.fasta -pa 10 -s -a -lib 16-giga-final-TElib.fa
+-dir 17-giga-RMask -xsmall -gff
+
+#################### RM.out TO BED
+grep 'scaffold' Gi-margarita-unmasked-FINAL-scaffolds.fasta.out | grep 'family' | sed 's/\/Unknown//' | awk
+'{OFS="\t"}{print $5, $6, $7, $11}' | sed 's/LTR\/Ngaro/DIRS/' | sed 's/LTR\/DIRS/DIRS/' | sed 's/hAT/DNA\/hAT/'
+| sed 's/Ginger-1/DNA\/Ginger-1/' | sed 's/DNA\/DNA/DNA/' | sed 's/CMC-Plavaka/DNA\/CMC-Plavaka/' | sed
+'s/DNA\/Crypton-A/Crypton/' | sed 's/DNA\/Maverick/Maverick/' | sed 's/RC\///' | sed 's/Zator/DNA\/Zator/' | sed
+'s/DNA\/DNA/DNA/' > Gi-margarita-unmasked-FINAL-scaffolds.fasta.bed
+
