@@ -1,3 +1,3 @@
 This repo contains analysis scripts for 3D genome analysis of *Gigaspora margarita* and its bacterial endosymbiont, *Ca*Gg.
 
-**Please cite:** *The 3D Genome of Gigaspora margarita Unveils Stable Chromatin and Nucleolar Organization and Symbiont-Dependent Genome Dynamics.*
+**Please cite:** *The 3D Genome of Gigaspora margarita Unveils Stable Chromatin and Nucleolar Organization and Symbiont-Dependent Genome Dynamics.* https://doi.org/10.1111/nph.71100
